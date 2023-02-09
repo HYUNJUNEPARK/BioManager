@@ -4,7 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <variable
+            name="main"
+            type="com.ex.app.MainActivity" />
 
+        <import type="android.view.View"/>
+        <variable
+            name="visibilityOfBiometric"
+            type="Boolean" />
+
+        <variable
+            name="isActivatedBiometric"
+            type="Boolean" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -16,7 +27,10 @@
             android:id="@+id/testButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hello World!"
+            android:text="Test"
+            android:visibility="@{visibilityOfBiometric ? View.VISIBLE : View.GONE, default = visible}"
+            android:enabled="@{isActivatedBiometric ? false : true, default = true}"
+            android:onClick="@{()->main.onClickToUseBiometricManager()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

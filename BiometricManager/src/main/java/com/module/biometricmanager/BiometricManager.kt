@@ -10,62 +10,61 @@ import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 
-//TODO 이름을 뭐라고 해야할지 모르겠음 ...
-enum class CanUseBiometric {
-    TRUE,
-    FALSE,
-    EXCEPTION
-}
-
 /**
- * BiometricPrompt API Lev 28
- * BiometricManager API Lev 29
+ * BiometricPrompt API lev 28
+ * BiometricManager API lev 29
  */
 class BiometricManager(private val activity: AppCompatActivity) {
     /**
      * 생체 인증이 가능한지 확인한다.
+     *
+     * @return BiometricReturnType
+     * [1].BiometricReturnType.TRUE : 생체 인증 가능한 경우 - showBiometricPrompt()
+     * [2].BiometricReturnType.FALSE : 디바이스에 적절한 인식 센서가 없는 경우 -> 지문 인증 관련 UI를 모두 가린다.
+     * [3].BiometricReturnType.UNENROLLED : 생체 인식 정보가 등록되어 있지 않은 경우 -> 사용자에게 안내 후 설정창을 띄워 지문 등록을 유도한다.() -> showSecuritySettingDialog()
+     * [4].BiometricReturnType.EXCEPTION : 일시적으로 생체 인증을 사용할 수 없거나 센서에 보안 취약점이 있는 경우 -> 사용자에게 안내하고 기능을 비활성화한다.
      */
-    fun canAuthenticateByBioMetric() {
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+    fun canAuthenticateByBioMetric(): BiometricReturnType {
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) { //API 29
             val canAuthenticate = BiometricManager.from(activity).canAuthenticate(
                 BiometricManager.Authenticators.BIOMETRIC_STRONG or
                         BiometricManager.Authenticators.DEVICE_CREDENTIAL
             )
             when (canAuthenticate) {
-                BiometricManager.BIOMETRIC_SUCCESS -> { //생체 인증 가능한 경우
-                    LogUtil.logD("App can authenticate using biometrics.")
-                    showBiometricPrompt(activity)
+                BiometricManager.BIOMETRIC_SUCCESS -> {
+                    LogUtil.logD("BIOMETRIC_SUCCESS")
+                    return BiometricReturnType.TRUE
                 }
 
-                BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> { //디바이스에서 생체 인증을 지원하지 않는 경우
-                    LogUtil.logD("No biometric features available on this device.")
+                BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
+                    LogUtil.logD("BIOMETRIC_ERROR_NONE_ENROLLED")
+                    return BiometricReturnType.UNENROLLED
                 }
 
-
-                BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE -> { //현재 생체 인증을 사용할 수 없는 경우
-                    LogUtil.logD("Biometric features are currently unavailable. Try again later")
-                }
-
-                BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> { //생체 인식 정보가 등록되어 있지 않은 경우
-                    LogUtil.logD("Prompts the user to create credentials that your app accepts.")
-                    showSecuritySettingDialog(activity)
+                BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE, //현재 생체 인증을 사용할 수 없는 경우
+                BiometricManager.BIOMETRIC_ERROR_SECURITY_UPDATE_REQUIRED -> { //디바이스 센서에 보안 취약점이 있는 경우
+                    LogUtil.logD("BIOMETRIC_ERROR_HW_UNAVAILABLE or BIOMETRIC_ERROR_SECURITY_UPDATE_REQUIRED")
+                    return BiometricReturnType.EXCEPTION
                 }
             }
-        } else { //API 버전 미만
-
         }
+        LogUtil.logD("BIOMETRIC_ERROR_NO_HARDWARE") //디바이스에 적절한 센서가 없는 경우
+        return BiometricReturnType.FALSE
     }
 
     /**
      * 지문 인식이 가능한 경우 지문 인식 프롬프트를 띄운다.
+     * canAuthenticateByBioMetric() 의 반환값이 BiometricReturnType.TRUE 인 경우 사용한다.
+     *
+     * @param activity
      */
-    private fun showBiometricPrompt(activity: AppCompatActivity) {
+    fun showBiometricPrompt(activity: AppCompatActivity) {
         val promptUiInfo = BiometricPrompt.PromptInfo.Builder().apply {
-            setTitle("Sample App Authentication")
-            setSubtitle("Please login to get access")
-            setDescription("Sample App is using Android biometric authentication")
+            setTitle(this@BiometricManager.activity.getString(R.string.prompt_title))
+            setSubtitle(this@BiometricManager.activity.getString(R.string.prompt_subtitle))
+            setDescription(this@BiometricManager.activity.getString(R.string.prompt_description))
+            setNegativeButtonText(this@BiometricManager.activity.getString(R.string.prompt_negative_button))
             setConfirmationRequired(false)
-            setNegativeButtonText("close")
         }.build()
 
         //지문 인식 프롬프트
@@ -74,6 +73,10 @@ class BiometricManager(private val activity: AppCompatActivity) {
             override fun onAuthenticationError(errCode: Int, errString: CharSequence) { //지문 인식 ERROR
                 super.onAuthenticationError(errCode, errString)
                 LogUtil.logD("errCode is $errCode and errString is: $errString")
+
+                if (errCode == 11) { //등록된 지문이 없는 에러
+                    showSecuritySettingDialog(activity)
+                }
             }
 
             override fun onAuthenticationFailed() { //"지문 인식 실패"
@@ -96,30 +99,24 @@ class BiometricManager(private val activity: AppCompatActivity) {
 
     /**
      * 지문이 등록되어 있지 않은 경우 등록 설정창을 띄운다.
+     * canAuthenticateByBioMetric() 의 반환값이 BiometricReturnType.UNENROLLED 인 경우 사용한다.
+     *
+     * @param context
      */
-    private fun showSecuritySettingDialog(context: Context) {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) { ////ACTION_BIOMETRIC_ENROLL 지원
-            val dialogBuilder = AlertDialog.Builder(context)
-            dialogBuilder
-                .setTitle("나의 앱")
-                .setMessage("지문 등록이 필요합니다. 지문등록 설정화면으로 이동하시겠습니까?")
-                .setPositiveButton("확인") { _, _ ->
-                    val intent = Intent(Settings.ACTION_BIOMETRIC_ENROLL).apply { //API30
-                        putExtra(
-                            Settings.EXTRA_BIOMETRIC_AUTHENTICATORS_ALLOWED,
-                            android.hardware.biometrics.BiometricManager.Authenticators.BIOMETRIC_STRONG or
-                                  android.hardware.biometrics.BiometricManager.Authenticators.DEVICE_CREDENTIAL
-                        )
-                    }
-                    context.startActivity(intent)
-                }
-                .setNegativeButton("취소") { dialog, _ ->
-                    dialog.cancel()
-                }
-            dialogBuilder.show()
-        } else { //ACTION_BIOMETRIC_ENROLL 지원 안하는 버전
-            LogUtil.logD("ACTION_BIOMETRIC_ENROLL 지원 안하는 버전")
-        }
+    fun showSecuritySettingDialog(context: Context) {
+        val dialogBuilder = AlertDialog.Builder(context)
+        dialogBuilder
+            .setTitle("나의 앱")
+            .setMessage("지문 등록이 필요합니다.\n 지문등록 설정화면으로 이동하시겠습니까?")
+            .setPositiveButton("확인") { _, _ ->
+                val intent = Intent(Settings.ACTION_BIOMETRIC_ENROLL)
+                context.startActivity(intent)
+            }
+            .setNegativeButton("취소") { dialog, _ ->
+                dialog.cancel()
+            }
+        dialogBuilder.show()
+
     }
 }
 
