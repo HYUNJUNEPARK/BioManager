@@ -4,19 +4,19 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.ex.app.databinding.ActivityMainBinding
-import com.module.biometricmanager.BioManager
+import com.module.biometricmanager.BiometricManager
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private lateinit var bioManager: BioManager
+    private lateinit var biometricManager: BiometricManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        bioManager = BioManager(this)
+        biometricManager = BiometricManager(this)
 
         binding.testButton.setOnClickListener {
-            bioManager.canAuthenticateByBioMetric()
+            biometricManager.canAuthenticateByBioMetric()
         }
     }
 }

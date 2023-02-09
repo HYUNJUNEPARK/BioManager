@@ -1,7 +1,6 @@
-package com.module.biometricmanager.util
+package com.module.biometricmanager
 
 import android.util.Log
-import com.module.biometricmanager.BuildConfig
 
 object LogUtil {
     private const val MODULE_NAME = "BiometricManager"
