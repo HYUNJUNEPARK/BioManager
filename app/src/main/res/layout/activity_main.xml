@@ -14,27 +14,45 @@
             type="Boolean" />
 
         <variable
-            name="isActivatedBiometric"
+            name="isGoneBiometricUI"
             type="Boolean" />
+
+        <variable
+            name="isVisibleBiometricUI"
+            type="Boolean" />
+
+
+        <variable
+            name="isUnableBiometric"
+            type="Boolean" />
+
+
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
+        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         tools:context=".MainActivity">
+
+        <TextView
+            android:layout_gravity="center"
+            android:text="이 텍스트가 보인다면 지문 인식을 지원하지 않는 디바이스입니다."
+            android:visibility="@{isVisibleBiometricUI? View.VISIBLE : View.GONE}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
         <Button
             android:id="@+id/testButton"
             android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:textAllCaps="false"
             android:layout_height="wrap_content"
             android:text="Test"
-            android:visibility="@{visibilityOfBiometric ? View.VISIBLE : View.GONE, default = visible}"
-            android:enabled="@{isActivatedBiometric ? false : true, default = true}"
-            android:onClick="@{()->main.onClickToUseBiometricManager()}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:visibility="@{isGoneBiometricUI ? View.GONE : View.VISIBLE}"
+            android:enabled="@{isUnableBiometric? false : true}"
+            android:onClick="@{()->main.onClickToUseBiometricManager()}"/>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 </layout>

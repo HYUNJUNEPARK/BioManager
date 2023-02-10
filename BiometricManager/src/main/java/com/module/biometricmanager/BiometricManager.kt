@@ -11,6 +11,9 @@ import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 
 /**
+ * minSdk 28
+ * targetSdk 31
+ *
  * BiometricPrompt API lev 28
  * BiometricManager API lev 29
  */
@@ -19,37 +22,38 @@ class BiometricManager(private val activity: AppCompatActivity) {
      * 생체 인증이 가능한지 확인한다.
      *
      * @return BiometricReturnType
-     * [1].BiometricReturnType.TRUE : 생체 인증 가능한 경우 - showBiometricPrompt()
+     * [1].BiometricReturnType.TRUE : 생체 인증 가능한 경우 -> showBiometricPrompt()
      * [2].BiometricReturnType.FALSE : 디바이스에 적절한 인식 센서가 없는 경우 -> 지문 인증 관련 UI를 모두 가린다.
      * [3].BiometricReturnType.UNENROLLED : 생체 인식 정보가 등록되어 있지 않은 경우 -> 사용자에게 안내 후 설정창을 띄워 지문 등록을 유도한다.() -> showSecuritySettingDialog()
-     * [4].BiometricReturnType.EXCEPTION : 일시적으로 생체 인증을 사용할 수 없거나 센서에 보안 취약점이 있는 경우 -> 사용자에게 안내하고 기능을 비활성화한다.
+     * [4].BiometricReturnType.EXCEPTION : 지문 인증을 일시적으로 사용할 수 없거나 보안 업데이트가 필요한 경우 -> 사용자에게 안내하고 기능을 비활성화한다.
      */
     fun canAuthenticateByBioMetric(): BiometricReturnType {
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) { //API 29
-            val canAuthenticate = BiometricManager.from(activity).canAuthenticate(
-                BiometricManager.Authenticators.BIOMETRIC_STRONG or
-                        BiometricManager.Authenticators.DEVICE_CREDENTIAL
-            )
-            when (canAuthenticate) {
-                BiometricManager.BIOMETRIC_SUCCESS -> {
-                    LogUtil.logD("BIOMETRIC_SUCCESS")
-                    return BiometricReturnType.TRUE
-                }
+        val canAuthenticate = BiometricManager.from(activity).canAuthenticate(
+            BiometricManager.Authenticators.BIOMETRIC_STRONG or
+                    BiometricManager.Authenticators.DEVICE_CREDENTIAL
+        )
 
-                BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
-                    LogUtil.logD("BIOMETRIC_ERROR_NONE_ENROLLED")
-                    return BiometricReturnType.UNENROLLED
-                }
+        when (canAuthenticate) {
+            BiometricManager.BIOMETRIC_SUCCESS -> {
+                LogUtil.logD("BIOMETRIC_SUCCESS")
+                return BiometricReturnType.TRUE
+            }
 
-                BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE, //현재 생체 인증을 사용할 수 없는 경우
-                BiometricManager.BIOMETRIC_ERROR_SECURITY_UPDATE_REQUIRED -> { //디바이스 센서에 보안 취약점이 있는 경우
-                    LogUtil.logD("BIOMETRIC_ERROR_HW_UNAVAILABLE or BIOMETRIC_ERROR_SECURITY_UPDATE_REQUIRED")
-                    return BiometricReturnType.EXCEPTION
-                }
+            BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
+                LogUtil.logD("BIOMETRIC_ERROR_NONE_ENROLLED")
+                return BiometricReturnType.UNENROLLED
+            }
+
+            BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> { //디바이스에 적절한 센서가 없는 경우
+                LogUtil.logD("BIOMETRIC_ERROR_NO_HARDWARE")
+                return BiometricReturnType.FALSE
+            }
+
+            else -> { //지문 인증을 사용할 수 없거나 보안 업데이트가 필요한 경우
+                LogUtil.logD("BIOMETRIC_ERROR_HW_UNAVAILABLE or BIOMETRIC_ERROR_SECURITY_UPDATE_REQUIRED")
+                return BiometricReturnType.EXCEPTION
             }
         }
-        LogUtil.logD("BIOMETRIC_ERROR_NO_HARDWARE") //디바이스에 적절한 센서가 없는 경우
-        return BiometricReturnType.FALSE
     }
 
     /**
@@ -116,7 +120,6 @@ class BiometricManager(private val activity: AppCompatActivity) {
                 dialog.cancel()
             }
         dialogBuilder.show()
-
     }
 }
 
