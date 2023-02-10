@@ -2,7 +2,7 @@ package com.module.biometricmanager
 
 import android.util.Log
 
-object LogUtil {
+internal object LogUtil {
     private const val MODULE_NAME = "BiometricManager"
 
     fun logD(contents: String) {

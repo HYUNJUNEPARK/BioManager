@@ -11,11 +11,9 @@ import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 
 /**
+ * compileSdk 33
  * minSdk 28
  * targetSdk 31
- *
- * BiometricPrompt API lev 28
- * BiometricManager API lev 29
  */
 class BiometricManager(private val activity: AppCompatActivity) {
     /**
