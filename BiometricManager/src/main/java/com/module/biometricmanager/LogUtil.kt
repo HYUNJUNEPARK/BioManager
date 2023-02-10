@@ -7,13 +7,13 @@ object LogUtil {
 
     fun logD(contents: String) {
         if(BuildConfig.DEBUG) {
-            Log.d(MODULE_NAME, "$contents")
+            Log.d(MODULE_NAME, contents)
         }
     }
 
     fun logE(contents: String) {
         if(BuildConfig.DEBUG) {
-            Log.e(MODULE_NAME, "$contents")
+            Log.e(MODULE_NAME, contents)
         }
     }
 

@@ -29,8 +29,7 @@ class BiometricManager(private val activity: AppCompatActivity) {
      */
     fun canAuthenticateByBioMetric(): BiometricReturnType {
         val canAuthenticate = BiometricManager.from(activity).canAuthenticate(
-            BiometricManager.Authenticators.BIOMETRIC_STRONG or
-                    BiometricManager.Authenticators.DEVICE_CREDENTIAL
+            BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.DEVICE_CREDENTIAL
         )
 
         when (canAuthenticate) {
@@ -111,15 +110,28 @@ class BiometricManager(private val activity: AppCompatActivity) {
         val dialogBuilder = AlertDialog.Builder(context)
         dialogBuilder
             .setTitle("나의 앱")
-            .setMessage("지문 등록이 필요합니다.\n 지문등록 설정화면으로 이동하시겠습니까?")
+            .setMessage("지문 등록이 필요합니다.\n지문등록 설정화면으로 이동하시겠습니까?")
             .setPositiveButton("확인") { _, _ ->
-                val intent = Intent(Settings.ACTION_BIOMETRIC_ENROLL)
-                context.startActivity(intent)
+                goBiometricEnrollActivity(context)
             }
             .setNegativeButton("취소") { dialog, _ ->
                 dialog.cancel()
             }
         dialogBuilder.show()
+    }
+
+    /**
+     * 지문 등록 화면으로 이동한다.
+     * 앱에서 커스텀된 다이얼로그에서 필요한 경우 사용한다.
+     * API 30 부터 사용 가능
+     *
+     * @param context
+     */
+    fun goBiometricEnrollActivity(context: Context) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) { //Q: API 29
+            val intent = Intent(Settings.ACTION_BIOMETRIC_ENROLL)
+            context.startActivity(intent)
+        }
     }
 }
 
