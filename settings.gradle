@@ -14,4 +14,3 @@ dependencyResolutionManagement {
 }
 rootProject.name = "BiometricManager"
 include ':app'
-include ':BiometricManager'

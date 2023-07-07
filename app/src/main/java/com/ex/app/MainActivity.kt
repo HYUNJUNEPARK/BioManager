@@ -5,8 +5,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.ex.app.databinding.ActivityMainBinding
-import com.module.biometricmanager.BiometricManager
-import com.module.biometricmanager.BiometricReturnType
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding

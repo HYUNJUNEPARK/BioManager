@@ -1,4 +1,4 @@
-package com.module.biometricmanager
+package com.ex.app
 
 enum class BiometricReturnType {
     TRUE,

@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="prompt_title">Sample App Authentication</string>
-    <string name="prompt_subtitle">Please login to get access</string>
-    <string name="prompt_description">Sample App is using Android biometric authentication</string>
-    <string name="prompt_negative_button">close</string>
-</resources>
