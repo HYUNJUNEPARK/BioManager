@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
+import timber.log.Timber
 
 /**
  * compileSdk 33
@@ -32,22 +33,19 @@ class BiometricManager(private val activity: AppCompatActivity) {
 
         when (canAuthenticate) {
             BiometricManager.BIOMETRIC_SUCCESS -> {
-                LogUtil.logD("BIOMETRIC_SUCCESS")
+                Timber.d("BIOMETRIC_SUCCESS")
                 return BiometricReturnType.TRUE
             }
-
             BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
-                LogUtil.logD("BIOMETRIC_ERROR_NONE_ENROLLED")
+                Timber.d("BIOMETRIC_ERROR_NONE_ENROLLED")
                 return BiometricReturnType.UNENROLLED
             }
-
             BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> { //디바이스에 적절한 센서가 없는 경우
-                LogUtil.logD("BIOMETRIC_ERROR_NO_HARDWARE")
+                Timber.d("BIOMETRIC_ERROR_NO_HARDWARE")
                 return BiometricReturnType.FALSE
             }
-
             else -> { //지문 인증을 사용할 수 없거나 보안 업데이트가 필요한 경우
-                LogUtil.logD("BIOMETRIC_ERROR_HW_UNAVAILABLE or BIOMETRIC_ERROR_SECURITY_UPDATE_REQUIRED")
+                Timber.d("BIOMETRIC_ERROR_HW_UNAVAILABLE or BIOMETRIC_ERROR_SECURITY_UPDATE_REQUIRED")
                 return BiometricReturnType.EXCEPTION
             }
         }
@@ -73,8 +71,7 @@ class BiometricManager(private val activity: AppCompatActivity) {
         val callback = object : BiometricPrompt.AuthenticationCallback() {
             override fun onAuthenticationError(errCode: Int, errString: CharSequence) { //지문 인식 ERROR
                 super.onAuthenticationError(errCode, errString)
-                LogUtil.logD("errCode is $errCode and errString is: $errString")
-
+                Timber.e("errCode is $errCode and errString is: $errString")
                 if (errCode == 11) { //등록된 지문이 없는 에러
                     showSecuritySettingDialog(activity)
                 }
@@ -82,12 +79,12 @@ class BiometricManager(private val activity: AppCompatActivity) {
 
             override fun onAuthenticationFailed() { //"지문 인식 실패"
                 super.onAuthenticationFailed()
-                LogUtil.logD("User biometric rejected.")
+                Timber.d("User biometric rejected.")
             }
 
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) { //"지문 인식 성공"
                 super.onAuthenticationSucceeded(result)
-                LogUtil.logD("Authentication was successful")
+                Timber.d("Authentication was successful")
             }
         }
         val biometricPrompt = BiometricPrompt(

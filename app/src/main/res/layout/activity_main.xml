@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="main"
             type="com.ex.app.MainActivity" />
-
-        <import type="android.view.View"/>
 
         <variable
             name="isGoneBiometricUI"
@@ -22,34 +21,31 @@
         <variable
             name="isUnableBiometric"
             type="Boolean" />
-
-
     </data>
 
     <LinearLayout
-        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:padding="30dp"
         tools:context=".MainActivity">
 
         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="이 텍스트가 보인다면 지문 인식을 지원하지 않는 디바이스입니다."
-            android:visibility="@{isVisibleBiometricUI? View.VISIBLE : View.GONE}"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:visibility="@{isVisibleBiometricUI? View.VISIBLE : View.GONE}" />
 
         <Button
             android:id="@+id/testButton"
             android:layout_width="wrap_content"
-            android:layout_gravity="center"
-            android:textAllCaps="false"
             android:layout_height="wrap_content"
-            android:text="Test"
-            android:visibility="@{isGoneBiometricUI ? View.GONE : View.VISIBLE}"
+            android:layout_gravity="center"
             android:enabled="@{isUnableBiometric? false : true}"
-            android:onClick="@{()->main.onClickToUseBiometricManager()}"/>
-
+            android:onClick="@{()->main.onClickToUseBiometricManager()}"
+            android:text="Test"
+            android:textAllCaps="false"
+            android:visibility="@{isGoneBiometricUI ? View.GONE : View.VISIBLE}" />
     </LinearLayout>
 </layout>
