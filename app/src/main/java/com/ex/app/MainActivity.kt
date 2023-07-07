@@ -114,7 +114,6 @@ class MainActivity : AppCompatActivity() {
                         //TODO Handling
                     }
                     11 -> {//등록된 지문이 없는 에러 / 얼굴 인식 잠금 해제를 설정하지 않았습니다.
-                        //등록된 지문이 없습니다.
                         Toast.makeText(this@MainActivity, "$errString", Toast.LENGTH_SHORT).show()
                         showSecuritySettingDialog(activity)
                     }
@@ -139,12 +138,12 @@ class MainActivity : AppCompatActivity() {
         biometricPrompt.authenticate(promptUi)
     }
 
-    //지문이 등록되어 있지 않은 경우 등록 설정창을 띄운다.
+    //생체 인식 정보가 등록되어 있지 않거나, 센서 사용이 중지된 경우.
     private fun showSecuritySettingDialog(context: Context) {
         val dialogBuilder = AlertDialog.Builder(context)
         dialogBuilder
-            .setTitle("나의 앱")
-            .setMessage("지문 등록이 필요합니다.\n지문등록 설정화면으로 이동하시겠습니까?")
+            .setTitle("알림")
+            .setMessage("생체 인식 정보가 등록되어 있지 않거나, 인식 센서 사용이 중지되었습니다. 등록 화면으로 이동하시겠습니까?")
             .setPositiveButton("확인") { _, _ ->
                 goBiometricEnrollActivity(context)
             }
