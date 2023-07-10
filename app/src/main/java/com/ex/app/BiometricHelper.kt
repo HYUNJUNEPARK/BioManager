@@ -114,7 +114,6 @@ object BiometricHelper {
         biometricPrompt.authenticate(promptUi)
     }
 
-
     //생체 인식 정보가 등록되어 있지 않거나, 센서 사용이 중지된 경우.
     fun showSecuritySettingDialog(context: Context) {
         val dialogBuilder = AlertDialog.Builder(context)

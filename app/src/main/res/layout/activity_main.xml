@@ -50,29 +50,58 @@
             android:layout_height="wrap_content"
             android:hint="원문" />
 
-        <Button
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="@{()->main.encrypted(mainEditText.getText().toString())}"
-            android:text="Encrypt" />
+            android:layout_gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:onClick="@{()->main.encrypted(mainEditText.getText().toString())}"
+                android:src="@drawable/baseline_fingerprint_24" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="ENCRYPT" />
+        </LinearLayout>
+
 
         <TextView
             android:id="@+id/main_tv_encrypt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             tools:text="Encrypted String" />
 
-        <Button
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="@{()->main.decrypted(mainTvEncrypt.getText().toString())}"
-            android:text="Decrypt" />
+            android:layout_gravity="center"
+            android:layout_marginTop="50dp"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:onClick="@{()->main.decrypted(mainTvEncrypt.getText().toString())}"
+                android:src="@drawable/baseline_fingerprint_24" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="ENCRYPT" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/main_tv_decrypt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             tools:text="Decrypted String" />
-
     </LinearLayout>
 </layout>
