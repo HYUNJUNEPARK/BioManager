@@ -105,15 +105,25 @@ class MainActivity : AppCompatActivity() {
             override fun onAuthenticationError(errCode: Int, errString: CharSequence) { //지문 인식 ERROR
                 super.onAuthenticationError(errCode, errString)
                 Timber.e("errCode is $errCode and errString is: $errString")
+                BiometricPrompt.ERROR_NO_BIOMETRICS
                 when(errCode) {
-                    7 -> { //시도 횟수가 너무 많습니다. 나중에 다시 시도하세요. -> 30 초 블럭!
+                    BiometricPrompt.ERROR_CANCELED -> {
+                        //errCode is 5 and errString is: 지문 인식 작업이 취소되었습니다.
+                    }
+                    BiometricPrompt.ERROR_LOCKOUT -> {
+                        //시도 횟수가 너무 많습니다. 나중에 다시 시도하세요. -> 30 초 블럭!
                         blockTime = System.currentTimeMillis()
                         isBiometricBlocked = true //생체 인식 30초 임시 블럭
                     }
-                    9 -> { //시도 횟수가 너무 많습니다. 지문 센서가 사용 중지되었습니다. -> 제법 오랜 시간 블럭됨
-                        //TODO Handling
+                    BiometricPrompt.ERROR_LOCKOUT_PERMANENT-> {
+                        //시도 횟수가 너무 많습니다. 지문 센서가 사용 중지되었습니다. -> 제법 오랜 시간 블럭됨
                     }
-                    11 -> {//등록된 지문이 없는 에러 / 얼굴 인식 잠금 해제를 설정하지 않았습니다.
+                    BiometricPrompt.ERROR_USER_CANCELED -> {
+                        // errCode is 10 and errString is: 사용자가 지문 인식 작업을 취소했습니다.
+                    }
+                    BiometricPrompt.ERROR_NO_BIOMETRICS -> {
+                        //등록된 지문이 없는 에러 / 얼굴 인식 잠금 해제를 설정하지 않았습니다.
+                        //errCode is 11 and errString is: 얼굴 인식 잠금 해제를 설정하지 않았습니다.
                         Toast.makeText(this@MainActivity, "$errString", Toast.LENGTH_SHORT).show()
                         showSecuritySettingDialog(activity)
                     }
