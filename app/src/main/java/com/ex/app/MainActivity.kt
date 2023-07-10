@@ -3,7 +3,6 @@ package com.ex.app
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import android.media.MediaDrm.ErrorCodes
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
