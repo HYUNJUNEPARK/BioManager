@@ -35,14 +35,43 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:onClick="@{()->main.onTestButtonClicked()}"
-            android:text="Test"
+            android:text="생체 인증 프롬프트 테스트"
             android:textAllCaps="false" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginVertical="10dp"
+            android:layout_marginVertical="30dp"
             android:background="@color/black" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="저장할 데이터" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="2"
+                android:text="저장된 데이터 없음" />
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="저장" />
+
+        </LinearLayout>
 
         <EditText
             android:id="@+id/main_edit_text"
@@ -54,6 +83,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginTop="25dp"
             android:orientation="vertical">
 
             <ImageView
@@ -75,13 +105,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:textColor="@color/purple_200"
             tools:text="Encrypted String" />
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="25dp"
             android:orientation="vertical">
 
             <ImageView
@@ -102,6 +133,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:textColor="@color/purple_200"
             tools:text="Decrypted String" />
     </LinearLayout>
 </layout>

@@ -85,15 +85,19 @@ class MainActivity : AppCompatActivity() {
                 BiometricPrompt.ERROR_NO_BIOMETRICS
                 when(errCode) {
                     BiometricPrompt.ERROR_CANCELED -> {
+                        Toast.makeText(activity.applicationContext, "$errString", Toast.LENGTH_SHORT).show()
                         //errCode is 5 and errString is: 지문 인식 작업이 취소되었습니다.
                     }
                     BiometricPrompt.ERROR_LOCKOUT -> {
+                        Toast.makeText(activity.applicationContext, "$errString", Toast.LENGTH_SHORT).show()
                         //시도 횟수가 너무 많습니다. 나중에 다시 시도하세요. -> 30 초 블럭!
                     }
                     BiometricPrompt.ERROR_LOCKOUT_PERMANENT-> {
+                        Toast.makeText(activity.applicationContext, "$errString", Toast.LENGTH_SHORT).show()
                         //시도 횟수가 너무 많습니다. 지문 센서가 사용 중지되었습니다. -> 제법 오랜 시간 블럭됨
                     }
                     BiometricPrompt.ERROR_USER_CANCELED -> {
+                        Toast.makeText(activity.applicationContext, "$errString", Toast.LENGTH_SHORT).show()
                         // errCode is 10 and errString is: 사용자가 지문 인식 작업을 취소했습니다.
                     }
                     BiometricPrompt.ERROR_NO_BIOMETRICS -> {
@@ -106,7 +110,6 @@ class MainActivity : AppCompatActivity() {
                         Timber.e("errCode Else Block: $errCode")
                     }
                 }
-
             }
 
             override fun onAuthenticationFailed() { //"지문 인식 실패"
@@ -116,7 +119,6 @@ class MainActivity : AppCompatActivity() {
 
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) { //"지문 인식 성공"
                 super.onAuthenticationSucceeded(result)
-                Toast.makeText(activity.applicationContext, "생체인식 성공!!!", Toast.LENGTH_SHORT).show()
                 Timber.d("Authentication was successful")
                 when(mode) {
                     CipherMode.DECRYPT -> {
