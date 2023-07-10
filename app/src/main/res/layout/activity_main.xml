@@ -37,5 +37,42 @@
             android:onClick="@{()->main.onTestButtonClicked()}"
             android:text="Test"
             android:textAllCaps="false" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginVertical="10dp"
+            android:background="@color/black" />
+
+        <EditText
+            android:id="@+id/main_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="원문" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{()->main.encrypted(mainEditText.getText().toString())}"
+            android:text="Encrypt" />
+
+        <TextView
+            android:id="@+id/main_tv_encrypt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="Encrypted String" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{()->main.decrypted(mainTvEncrypt.getText().toString())}"
+            android:text="Decrypt" />
+
+        <TextView
+            android:id="@+id/main_tv_decrypt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="Decrypted String" />
+
     </LinearLayout>
 </layout>

@@ -12,6 +12,8 @@ import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import com.ex.app.EncryptionHelper.decryptString
+import com.ex.app.EncryptionHelper.encryptString
 import com.ex.app.databinding.ActivityMainBinding
 import timber.log.Timber
 
@@ -180,5 +182,17 @@ class MainActivity : AppCompatActivity() {
             }
             else -> {}
         }
+    }
+
+    fun encrypted(password: String?) {
+        //Toast.makeText(this, "Encrypted : $password", Toast.LENGTH_SHORT).show()
+        val encryptString = encryptString(password)
+        binding.mainTvEncrypt.text = encryptString
+    }
+
+    fun decrypted(password: String?) {
+        //Toast.makeText(this, "Decrypted : $password", Toast.LENGTH_SHORT).show()
+        val decryptString = decryptString(password)
+        binding.mainTvDecrypt.text = decryptString
     }
 }
