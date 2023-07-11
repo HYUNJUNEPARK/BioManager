@@ -37,6 +37,8 @@ object EncryptionHelper {
                        .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
                 keyGenerator.init(builder.build())
                 keyGenerator.generateKey()
+            } else {
+                Timber.d("Use Existing Key")
             }
 
             // Get the key
@@ -110,5 +112,24 @@ object EncryptionHelper {
             // Handle decryption error
         }
         return null
+    }
+
+    fun deleteKey(): Boolean {
+        try {
+            val keyStore = KeyStore.getInstance("AndroidKeyStore")
+            keyStore.load(null)
+
+            if (!keyStore.containsAlias(KEY_ALIAS)) {
+                Timber.d("Fail : Empty KeyStore")
+                return false
+            }
+
+            keyStore.deleteEntry(KEY_ALIAS)
+            return true
+        } catch (e: Exception) {
+            Timber.e("Fail Delete KeyStore Key : ${e.message}")
+            e.printStackTrace()
+        }
+        return false
     }
 }
