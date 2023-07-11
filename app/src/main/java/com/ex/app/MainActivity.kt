@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentActivity
 import com.ex.app.BiometricHelper.isPossibleToUseBiometric
 import com.ex.app.BiometricHelper.showBiometricPrompt
 import com.ex.app.BiometricHelper.showSecuritySettingDialog
@@ -73,48 +74,50 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun showCipherBiometricPrompt(activity: AppCompatActivity, mode: CipherMode, password: String?) {
+    private fun showCipherBiometricPrompt(fragmentActivity: FragmentActivity, mode: CipherMode, password: String?) {
         val title = when(mode) {
             CipherMode.ENCRYPT -> "암호화 생체인증"
             CipherMode.DECRYPT -> "복호화 생체인증"
         }
 
-        val promptUi = BiometricPrompt.PromptInfo.Builder().apply {
+        val promptInfo = BiometricPrompt.PromptInfo.Builder().apply {
             setTitle(title)
             setDescription("생체정보로 인증해 주세요")
             setNegativeButtonText("취소")
             setConfirmationRequired(false)
         }.build()
 
-        val executor = ContextCompat.getMainExecutor(activity)
+        val executor = ContextCompat.getMainExecutor(fragmentActivity)
 
-        val callback = object : BiometricPrompt.AuthenticationCallback() {
-            override fun onAuthenticationError(errCode: Int, errString: CharSequence) { //지문 인식 ERROR
-                super.onAuthenticationError(errCode, errString)
-                Timber.e("errCode is $errCode and errString is: $errString")
-            }
+        val biometricPrompt = BiometricPrompt(fragmentActivity, executor,
+            object : BiometricPrompt.AuthenticationCallback() {
+                override fun onAuthenticationError(errCode: Int, errString: CharSequence) { //지문 인식 ERROR
+                    super.onAuthenticationError(errCode, errString)
+                    Timber.e("errCode is $errCode and errString is: $errString")
+                }
 
-            override fun onAuthenticationFailed() { //"지문 인식 실패"
-                super.onAuthenticationFailed()
-                Timber.d("User biometric rejected.")
-            }
+                override fun onAuthenticationFailed() { //"지문 인식 실패"
+                    super.onAuthenticationFailed()
+                    Timber.d("User biometric rejected.")
+                }
 
-            override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) { //"지문 인식 성공"
-                super.onAuthenticationSucceeded(result)
-                Timber.d("Authentication was successful")
-                when(mode) {
-                    CipherMode.DECRYPT -> {
-                        val decryptString = decryptString(password)
-                        binding.mainTvDecrypt.text = decryptString
-                    }
-                    CipherMode.ENCRYPT -> {
-                        val encryptString = encryptString(password)
-                        binding.mainTvEncrypt.setText(encryptString)
+                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) { //"지문 인식 성공"
+                    super.onAuthenticationSucceeded(result)
+                    Timber.d("Authentication was successful")
+                    when(mode) {
+                        CipherMode.DECRYPT -> {
+                            val decryptString = decryptString(password)
+                            binding.mainTvDecrypt.text = decryptString
+                        }
+                        CipherMode.ENCRYPT -> {
+                            val encryptString = encryptString(password)
+                            binding.mainTvEncrypt.setText(encryptString)
+                        }
                     }
                 }
             }
-        }
-        val biometricPrompt = BiometricPrompt(activity, executor, callback)
-        biometricPrompt.authenticate(promptUi)
+        )
+
+        biometricPrompt.authenticate(promptInfo)
     }
 }
